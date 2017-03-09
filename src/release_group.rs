@@ -4,6 +4,8 @@ use std::collections::HashMap;
 use std::fmt;
 use traits::Entity;
 use error::Error;
+use artist::{Artist,  ArtistCredit};
+use json::JsonValue;
 
 #[derive(Debug, Clone)]
 pub struct ReleaseGroup {
@@ -11,20 +13,110 @@ pub struct ReleaseGroup {
     pub release_date: String,
     pub id: Uuid,
     pub artist: Uuid,
+    pub artist_credit: Vec<ArtistCredit>,
     pub primary_type: AlbumType,
     pub secondary_types: Vec<AlbumType>
 }
 
 impl ReleaseGroup {
-    pub fn new(title: String, release_date: String, id: Uuid, artist: Uuid, primary_type: AlbumType, secondary_types: Vec<AlbumType>) -> ReleaseGroup {
+    pub fn new(title: String, 
+               release_date: String, 
+               id: Uuid, 
+               artist: Uuid, 
+               artist_credit: Vec<ArtistCredit>,
+               primary_type: AlbumType, 
+               secondary_types: Vec<AlbumType>) -> ReleaseGroup {
+
         ReleaseGroup {
             title: title,
             release_date: release_date,
             id: id,
             artist: artist,
+            artist_credit: artist_credit,
             primary_type: primary_type,
             secondary_types: secondary_types
         }
+    }
+
+    pub fn empty() -> ReleaseGroup {
+        ReleaseGroup::new(
+            String::new(),
+            String::new(),
+            Uuid::nil(),
+            Uuid::nil(),
+            Vec::new(),
+            AlbumType::Other,
+            Vec::new()
+        )
+    }
+
+    pub fn extract_release_group(json_data: &JsonValue) -> Result<ReleaseGroup, Error> {
+        let artist_id = match json_data["id"].as_str() {
+            Some(x) => {
+                match Uuid::parse_str(x) {
+                    Ok(y) => y,
+                    Err(e) => return Err(Error::ParseUuid(e))
+                }
+            },
+            None => return Err(Error::AsSlice)
+        };
+
+        let mut secondary_types: Vec<AlbumType> = Vec::new();
+        for secondary_type in json_data["secondary-types"].members() {
+            secondary_types.push(match secondary_type.as_str() {
+                Some(x) => x.parse::<AlbumType>().unwrap(),
+                None => return Err(Error::AsSlice)
+            });
+        } 
+
+        let album_id = match json_data["id"].as_str() {
+            Some(x) => {
+                match Uuid::parse_str(x) {
+                    Ok(y) => y,
+                    Err(e) => return Err(Error::ParseUuid(e))
+                }
+            },
+            None => return Err(Error::AsSlice)
+        };
+
+        let album_type = match json_data["primary-type"].as_str() {
+            Some(x) => x.parse::<AlbumType>().unwrap(),
+            None => return Err(Error::AsSlice)
+        };
+
+        let mut artist_credit: Vec<ArtistCredit> = Vec::new();
+        if !json_data["artist-credit"].is_null() {
+            println!("AR {:?}", json_data["artist-credit"]);
+            for credited_artist in json_data["artist-credit"].members() {
+                println!("ARRE {:?}", credited_artist);
+                println!("ARRE {:?}", credited_artist["artist"]);
+                let artist = match Artist::extract_artist(&credited_artist["artist"]) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice)
+                };
+
+                println!("AR {:?}", artist);
+
+                artist_credit.push(
+                    ArtistCredit::new(
+                        credited_artist["name"].to_string(),
+                        credited_artist["joinphrase"].to_string(),
+                        artist,
+                    )
+                );
+            }
+        }
+
+        // TODO: add artist credit
+        Ok(ReleaseGroup::new(
+            json_data["title"].to_string(),
+            json_data["first-release-date"].to_string(),
+            album_id,
+            artist_id,
+            artist_credit,
+            album_type,
+            secondary_types
+        ))
     }
 }
 
@@ -86,11 +178,13 @@ impl Entity for ReleaseGroup {
                     None => return Err(Error::AsSlice)
                 };
 
+                // TODO: add artist credit
                 results.push(ReleaseGroup::new(
                     album["title"].to_string(),
                     String::new(),
                     id,
                     artist_id,
+                    Vec::new(),
                     album_type,
                     secondary_types
                 ))
@@ -151,11 +245,13 @@ impl Entity for ReleaseGroup {
             None => return Err(Error::AsSlice)
         };
 
+        // TODO: add artist credit
         Ok(ReleaseGroup::new(
             album_data["title"].to_string(),
             album_data["first-release-date"].to_string(),
             album_id,
             artist,
+            Vec::new(),
             album_type,
             secondary_types
         ))

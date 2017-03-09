@@ -109,3 +109,96 @@ impl fmt::Display for AlbumType {
         }
     }
 }
+
+#[derive(Debug, Clone)]
+pub enum ReleaseStatus {
+    Official,
+    Promotional,
+    Bootleg,
+    PseudoRelease
+}
+
+impl FromStr for ReleaseStatus {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<ReleaseStatus, ()> {
+        match s {
+            "Official" => Ok(ReleaseStatus::Official),
+            "Promotional" => Ok(ReleaseStatus::Promotional),
+            "Bootleg" => Ok(ReleaseStatus::Bootleg),
+            "Pseudo Release" => Ok(ReleaseStatus::PseudoRelease),
+            _ => Err(())
+        }
+    }
+}
+
+impl fmt::Display for ReleaseStatus {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            ReleaseStatus::Official => write!(f,"Official"),
+            ReleaseStatus::Promotional => write!(f,"Promotional"),
+            ReleaseStatus::Bootleg => write!(f,"Bootleg"),
+            ReleaseStatus::PseudoRelease=> write!(f,"Pseudo Release")
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub enum Packaging {
+    JewelCase,
+    SuperJewelCase,
+    SlimJewelCase,
+    Digipak,
+    CardboardSleeve,
+    KeepCase,
+    NoPack,
+    CassetteCase,
+    Book,
+    Fatbox,
+    SnapCase,
+    GatefoldCover,
+    DiscboxSlider
+}
+
+impl FromStr for Packaging {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Packaging, ()> {
+        match s {
+            "Jewel Case" => Ok(Packaging::JewelCase),
+            "Super Jewel Box/Case" => Ok(Packaging::SuperJewelCase),
+            "Slim Jewel Case" => Ok(Packaging::SlimJewelCase),
+            "Digipak" => Ok(Packaging::Digipak),
+            "Cardboard/Paper Sleeve" => Ok(Packaging::CardboardSleeve),
+            "Keep Case"  => Ok(Packaging::KeepCase),
+            "None"  => Ok(Packaging::NoPack),
+            "Cassette Case"  => Ok(Packaging::CassetteCase),
+            "Book" => Ok(Packaging::Book),
+            "Fatbox" => Ok(Packaging::Fatbox),
+            "Snap Case" => Ok(Packaging::SnapCase),
+            "Gatefold Cover" => Ok(Packaging::GatefoldCover),
+            "Discbox Slider" => Ok(Packaging::DiscboxSlider),
+            _ => Err(())
+        }
+    }
+}
+
+impl fmt::Display for Packaging {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Packaging::JewelCase => write!(f,"Jewel Case"),
+            Packaging::SuperJewelCase => write!(f,"Super Jewel Box/Case"),
+            Packaging::SlimJewelCase => write!(f,"Slim Jewel Case"),
+            Packaging::Digipak => write!(f,"Digipak"),
+            Packaging::CardboardSleeve => write!(f,"Cardboard/Paper Sleeve"),
+            Packaging::KeepCase => write!(f,"Keep Case"),
+            Packaging::NoPack => write!(f,"None"),
+            Packaging::CassetteCase => write!(f,"Cassette Case"),
+            Packaging::Book => write!(f,"Book"),
+            Packaging::Fatbox => write!(f,"Fatbox"),
+            Packaging::SnapCase => write!(f,"Snap Case"),
+            Packaging::GatefoldCover => write!(f,"Gatefold Cover"),
+            Packaging::DiscboxSlider => write!(f,"Discbox Slider")
+        }
+    }
+}

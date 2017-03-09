@@ -5,26 +5,67 @@ use std::fmt;
 use std::collections::HashMap;
 use traits::Entity;
 use error::Error;
+use json::JsonValue;
+use life_span::LifeSpan;
+use area::Area;
 
 #[derive(Debug, Clone)]
 pub struct Artist {
     pub id: Uuid,
     pub name: String,
     pub gender: String,
+    pub gender_id: Uuid,
     pub artist_type: PersonType,
+    pub artist_type_id: Uuid,
     pub tags: Vec<String>,
-    pub release_groups: Vec<ReleaseGroup>
+    pub release_groups: Vec<ReleaseGroup>,
+    pub disambiguation: String,
+    pub sort_name: String,
+    pub life_span: LifeSpan,
+    pub country: String,
+    pub area: Area,
+    pub begin_area: Area,
+    pub end_area: Area,
+    pub isnis: Vec<String>,
+    pub ipis: Vec<String>,
 }
 
 impl Artist {
-    pub fn new(id: Uuid, name: String, gender: String, artist_type: PersonType, tags: Vec<String>, release_groups: Vec<ReleaseGroup>) -> Artist {
+    pub fn new(id: Uuid, 
+               name: String, 
+               gender: String, 
+               gender_id: Uuid,
+               artist_type: PersonType,
+               artist_type_id: Uuid,
+               tags: Vec<String>, 
+               release_groups: Vec<ReleaseGroup>,
+               disambiguation: String,
+               sort_name: String,
+               life_span: LifeSpan,
+               country: String,
+               area: Area,
+               begin_area: Area,
+               end_area: Area,
+               isnis: Vec<String>,
+               ipis: Vec<String>) -> Artist {
         Artist {
             id: id,
             name: name,
             gender: gender,
+            gender_id: gender_id,
             artist_type: artist_type,
+            artist_type_id: artist_type_id,
             tags: tags,
-            release_groups: release_groups
+            release_groups: release_groups,
+            disambiguation: disambiguation,
+            sort_name: sort_name,
+            life_span: life_span,
+            country: country,
+            area: area,
+            begin_area: begin_area,
+            end_area: end_area,
+            isnis: isnis,
+            ipis: ipis
         }
     }
 
@@ -33,10 +74,121 @@ impl Artist {
             Uuid::nil(),
             String::new(),
             String::new(),
+            Uuid::nil(),
             PersonType::Other,
+            Uuid::nil(),
+            Vec::new(),
+            Vec::new(),
+            String::new(),
+            String::new(),
+            LifeSpan::empty(),
+            String::new(),
+            Area::empty(),
+            Area::empty(),
+            Area::empty(),
             Vec::new(),
             Vec::new()
         )
+    }
+    
+    pub fn extract_artist(json_data: &JsonValue) -> Result<Artist, Error> {
+        let artist_element = Artist::empty();
+
+        // where the value is a string
+        for element in vec!["name", 
+                                "gender",
+                                "disambiguation",
+                                "sort_name",
+                                "country"] {
+            if !json_data[element].is_null() { 
+                match json_data[element].as_str() {
+                    Some(x) => artist_element = Artist { element: x,
+                                                        .. artist_element },
+                    None => return Err(Error::AsSlice) 
+                }; 
+            }
+        }
+    
+        // where the value is an Uuid
+        for element in vec!["id",
+                             "gender_id",
+                             "artist_type_id"] {
+            if !json_data[element].is_null() {
+                match json_data[element].as_str() {
+                    Some(x) => {
+                        match Uuid::parse_str(x) {
+                            Ok(y) => artist_element = Artist { element: y,
+                                                        .. artist_element },
+                            Err(e) => return Err(Error::ParseUuid(e))
+                        }
+                    },
+                    None => return Err(Error::AsSlice)
+                }
+            }
+        }
+    
+        // where the value is a Vec<String>
+        for element in vec!["tags",
+                             "isnis",
+                             "ipis"] {
+            if !json_data[element].is_null() { 
+                match json_data[element].as_str() {
+                    Some(x) => artist_element = Artist { element: artist_element[element].push(x),
+                                                        .. artist_element },
+                    None => return Err(Error::AsSlice) 
+                }; 
+            }
+        }
+        
+        /*
+        if !json_data["type"].is_null() { 
+            match json_data["type"].as_str() {
+                Some(x) => artist_element.artist_type = x,
+                None => return Err(Error::AsSlice)
+            };
+        }
+
+
+        println!("AAA {:?}", json_data);
+
+        let mut tags: Vec<String> = Vec::new();
+        if !json_data["tags"].is_null() {
+            for tag in json_data["tags"].members() {
+                tags.push(tag["name"].to_string());
+            }
+        }
+
+        let artist_id = match json_data["id"].as_str() {
+            Some(x) => {
+                match Uuid::parse_str(x) {
+                    Ok(y) => y,
+                    Err(e) => return Err(Error::ParseUuid(e))
+                }
+            },
+            None => return Err(Error::AsSlice)
+        };
+
+        let mut artist_albums: Vec<ReleaseGroup> = Vec::new();
+        if !json_data["release-groups"].is_null() {
+            for album in json_data["release-groups"].members() {
+                match ReleaseGroup::extract_release_group(album) {
+                    Ok(x) => artist_albums.push(x),
+                    Err(e) => return Err(Error::AsSlice)
+                }
+            }
+        }
+
+        Ok(Artist::new(
+            artist_id,
+            json_data["name"].to_string(),
+            json_data["gender"].to_string(),
+            artist_type,
+            tags,
+            artist_albums
+        ))
+        */
+
+        Ok(artist_element)
     }
 }
 
@@ -116,73 +268,35 @@ impl Entity for Artist {
             let error_msg = artist_data["error"].to_string();
             return Err(Error::Http(error_msg));
         }
-
-        let artist_type = match artist_data["type"].as_str() {
-            Some(x) => x.parse::<PersonType>().unwrap(),
-            None => return Err(Error::AsSlice)
-        };
-
-        let mut tags: Vec<String> = Vec::new();
-        if !artist_data["tags"].is_null() {
-            for tag in artist_data["tags"].members() {
-                tags.push(tag["name"].to_string());
-            }
-        }
-
-        let artist_id = match artist_data["id"].as_str() {
-            Some(x) => {
-                match Uuid::parse_str(x) {
-                    Ok(y) => y,
-                    Err(e) => return Err(Error::ParseUuid(e))
-                }
-            },
-            None => return Err(Error::AsSlice)
-        };
-
-        let mut artist_albums: Vec<ReleaseGroup> = Vec::new();
-        if !artist_data["release-groups"].is_null() {
-            for album in artist_data["release-groups"].members() {
-                let mut secondary_types: Vec<AlbumType> = Vec::new();
-                for secondary_type in album["secondary-types"].members() {
-                    secondary_types.push(match secondary_type.as_str() {
-                        Some(x) => x.parse::<AlbumType>().unwrap(),
-                        None => return Err(Error::AsSlice)
-                    });
-                }
-
-                let album_id = match album["id"].as_str() {
-                    Some(x) => {
-                        match Uuid::parse_str(x) {
-                            Ok(y) => y,
-                            Err(e) => return Err(Error::ParseUuid(e))
-                        }
-                    },
-                    None => return Err(Error::AsSlice)
-                };
-
-                let album_type = match album["primary-type"].as_str() {
-                    Some(x) => x.parse::<AlbumType>().unwrap(),
-                    None => return Err(Error::AsSlice)
-                };
-
-                artist_albums.push(ReleaseGroup::new(
-                    album["title"].to_string(),
-                    album["first-release-date"].to_string(),
-                    album_id,
-                    artist_id,
-                    album_type,
-                    secondary_types
-                ));
-            }
-        }
-
-        Ok(Artist::new(
-            artist_id,
-            artist_data["name"].to_string(),
-            artist_data["gender"].to_string(),
-            artist_type,
-            tags,
-            artist_albums
-        ))
+    
+        Artist::extract_artist(&artist_data)
     }
 }
+
+
+#[derive(Debug, Clone)]
+pub struct ArtistCredit {
+    pub name: String,
+    pub joinphrase: String,
+    pub artist: Artist
+}
+
+impl ArtistCredit {
+    pub fn new(name: String, joinphrase: String, artist: Artist) -> ArtistCredit {
+        ArtistCredit {
+            name: name,
+            joinphrase: joinphrase,
+            artist: artist
+        }
+    }
+
+    pub fn empty() -> ArtistCredit {
+        ArtistCredit::new(
+            String::new(),
+            String::new(),
+            Artist::empty()
+        )
+    }
+}
+
+

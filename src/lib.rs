@@ -63,11 +63,25 @@ impl MusicBrainz {
         artist::Artist::empty()
     }
 
+    pub fn release(&self) -> release::Release {
+        release::Release::empty()
+    }
+
 }
 
+pub mod area;
 pub mod artist;
+pub mod cover_art_archive;
+pub mod disc;
+pub mod label;
+pub mod life_span;
+pub mod media;
+pub mod recording;
+pub mod release;
 pub mod release_group;
+pub mod text_representation;
 pub mod enums;
+pub mod track;
 pub mod traits;
 pub mod error;
 
