@@ -1,7 +1,11 @@
-#[derive(Debug, Clone)]
+use utils;
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct LifeSpan {
     begin: String,
     end: String,
+    #[serde(deserialize_with="utils::deserialize_bool")]
     ended: bool
 }
 
@@ -21,4 +25,8 @@ impl LifeSpan {
             false
         )
     }
+}
+
+impl Default for LifeSpan {
+    fn default() -> LifeSpan { LifeSpan::empty() } 
 }

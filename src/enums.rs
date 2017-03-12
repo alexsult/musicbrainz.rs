@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::fmt;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 /// The PersonType enum is used to state whether an artist is a person, a group, or something else.
 pub enum PersonType {
     /// Indicates an individual person.
@@ -16,6 +16,10 @@ pub enum PersonType {
     Character,
     /// Anything which does not fit into the above categories.
     Other
+}
+
+impl Default for PersonType {
+    fn default() -> PersonType{ PersonType::Other }
 }
 
 impl FromStr for PersonType {
@@ -47,7 +51,7 @@ impl fmt::Display for PersonType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum AlbumType {
     Album,
     Single,
@@ -63,6 +67,10 @@ pub enum AlbumType {
     DjMix,
     MixtapeStreet,
     Other,
+}
+
+impl Default for AlbumType {
+    fn default() -> AlbumType { AlbumType::Other }
 }
 
 impl FromStr for AlbumType {
@@ -110,12 +118,16 @@ impl fmt::Display for AlbumType {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ReleaseStatus {
     Official,
     Promotional,
     Bootleg,
     PseudoRelease
+}
+
+impl Default for ReleaseStatus {
+    fn default() -> ReleaseStatus { ReleaseStatus::Official }
 }
 
 impl FromStr for ReleaseStatus {
@@ -143,7 +155,7 @@ impl fmt::Display for ReleaseStatus {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Packaging {
     JewelCase,
     SuperJewelCase,
@@ -158,6 +170,10 @@ pub enum Packaging {
     SnapCase,
     GatefoldCover,
     DiscboxSlider
+}
+
+impl Default for Packaging {
+    fn default() -> Packaging { Packaging::NoPack }
 }
 
 impl FromStr for Packaging {

@@ -1,17 +1,23 @@
 extern crate hyper;
-extern crate json;
 extern crate uuid;
 extern crate url;
+#[macro_use]
+extern crate serde_json;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
 use std::collections::HashMap;
 use std::io::Read;
 use url::{Url};
+use error::Error;
 
 #[derive(Debug)]
 pub struct MusicBrainz {
     client: hyper::Client,
     user_agent: String
 }
+
 
 impl MusicBrainz {
     /// Instantiates a new `MusicBrainz` struct.
@@ -37,7 +43,8 @@ impl MusicBrainz {
         }
     }
 
-    fn get(&self, url: &str, params: &HashMap<&str, &str>) -> json::Result<json::JsonValue> {
+    //fn get(&self, url: &str, params: &HashMap<&str, &str>) -> json::Result<json::JsonValue> {
+    fn get(&self, url: &str, params: &HashMap<&str, &str>) -> Result<String, Error> {
         let base_uri = "https://musicbrainz.org/ws/2";
         let mut endpoint = Url::parse(&format!("{}/{}", base_uri, url))
             .expect("error parsing URL");
@@ -56,7 +63,7 @@ impl MusicBrainz {
         let mut buf = String::new();
         res.read_to_string(&mut buf).expect("failed to read response body to string");
 
-        json::parse(&buf)
+        Ok(buf)
     }
 
     pub fn artist(&self) -> artist::Artist {
@@ -69,6 +76,7 @@ impl MusicBrainz {
 
 }
 
+pub mod utils;
 pub mod area;
 pub mod artist;
 pub mod cover_art_archive;
@@ -84,6 +92,7 @@ pub mod enums;
 pub mod track;
 pub mod traits;
 pub mod error;
+pub mod tag;
 
 pub use traits::*;
 pub use uuid::Uuid;

@@ -1,11 +1,11 @@
 use std::{fmt, error};
-use json;
+use serde_json;
 use uuid;
 
 #[derive(Debug)]
 pub enum Error {
     Http(String),
-    ParseJson(json::Error),
+    ParseJson(serde_json::Error),
     ParseUuid(uuid::ParseError),
     AsSlice
 }

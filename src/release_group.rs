@@ -5,13 +5,19 @@ use std::fmt;
 use traits::Entity;
 use error::Error;
 use artist::{Artist,  ArtistCredit};
-use json::JsonValue;
+use utils;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct ReleaseGroup {
     pub title: String,
     pub release_date: String,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub artist: Uuid,
     pub artist_credit: Vec<ArtistCredit>,
     pub primary_type: AlbumType,
@@ -50,6 +56,7 @@ impl ReleaseGroup {
         )
     }
 
+    /*
     pub fn extract_release_group(json_data: &JsonValue) -> Result<ReleaseGroup, Error> {
         let artist_id = match json_data["id"].as_str() {
             Some(x) => {
@@ -118,6 +125,11 @@ impl ReleaseGroup {
             secondary_types
         ))
     }
+    */
+}
+
+impl Default for ReleaseGroup {
+    fn default() -> ReleaseGroup { ReleaseGroup::empty() }
 }
 
 impl PartialEq for ReleaseGroup {
@@ -133,6 +145,7 @@ impl fmt::Display for ReleaseGroup {
     }
 }
 
+/*
 impl Entity for ReleaseGroup {
     fn search(&self, client: &super::MusicBrainz, params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
         let data = match client.get("release-group", params) {
@@ -257,3 +270,4 @@ impl Entity for ReleaseGroup {
         ))
     }
 }
+*/

@@ -2,9 +2,14 @@ use uuid::Uuid;
 use life_span::LifeSpan;
 use area::Area;
 use release::Release;
+use utils;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)] 
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Label {
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     pub name: String,
     pub ipis: Vec<String>,
@@ -12,6 +17,8 @@ pub struct Label {
     pub life_span: LifeSpan,
     pub area: Area,
     pub label_type: String,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub type_id: Uuid,
     pub sort_name: String,
     pub label_code: i32,
@@ -72,7 +79,13 @@ impl Label {
     }
 }
 
-#[derive(Debug, Clone)]
+impl Default for Label {
+    fn default() -> Label { Label::empty() }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)] 
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct LabelInfo {
     pub catalog_number: String,
     pub label: Label
@@ -92,4 +105,8 @@ impl LabelInfo {
             Label::empty()
         )
     }
+}
+
+impl Default for LabelInfo {
+    fn default() -> LabelInfo { LabelInfo::empty() }
 }

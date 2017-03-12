@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct TextRepresentation {
     pub script: String,
     pub language: String
@@ -20,3 +22,6 @@ impl TextRepresentation {
     }
 }
 
+impl Default for TextRepresentation {
+    fn default() -> TextRepresentation { TextRepresentation::empty() }
+}

@@ -1,9 +1,14 @@
 use recording::Recording;
 use artist::ArtistCredit;
 use uuid::Uuid;
+use utils;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Track {
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     pub title: String,
     pub length: i32,
@@ -40,4 +45,8 @@ impl Track {
             0
         )
     }
+}
+
+impl Default for Track {
+    fn default() -> Track { Track::empty() }
 }

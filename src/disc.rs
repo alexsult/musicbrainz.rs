@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Disc {
     pub sectors: i32,
     pub offset_count: i32,
@@ -28,4 +30,8 @@ impl Disc {
             Vec::new()
         )
     }
+}
+
+impl Default for Disc {
+    fn default() -> Disc { Disc::empty() }
 }

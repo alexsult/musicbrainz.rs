@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct CoverArtArchive {
     pub back: bool,
     pub front: bool,
@@ -32,4 +34,8 @@ impl CoverArtArchive {
             false
         )
     }
+}
+
+impl Default for CoverArtArchive {
+    fn default() -> CoverArtArchive { CoverArtArchive::empty() }
 }

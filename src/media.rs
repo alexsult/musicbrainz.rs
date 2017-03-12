@@ -1,9 +1,14 @@
 use uuid::Uuid;
 use disc::Disc;
 use track::Track;
+use utils;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Media {
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub format_id: Uuid,
     pub tracks: Vec<Track>,
     pub format: String,
@@ -48,4 +53,8 @@ impl Media {
             String::new()
         )
     }
+}
+
+impl Default for Media {
+    fn default() -> Media { Media::empty() }
 }

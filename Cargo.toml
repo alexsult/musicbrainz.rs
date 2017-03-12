@@ -8,6 +8,12 @@ license = "MIT"
 
 [dependencies]
 hyper = "0.9.10"
-json = "0.10.2"
-uuid = "0.3.1"
 url = "1.2.0"
+serde_json = "0.9"
+serde = "0.9"
+serde_derive = "0.9"
+
+[dependencies.uuid]
+version="0.4"
+features=["serde"]
+

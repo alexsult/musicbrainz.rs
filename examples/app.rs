@@ -4,6 +4,7 @@ use musicbrainz::*;
 use std::collections::HashMap;
 
 fn main() {
+    /*
     let mb = MusicBrainz::new();
     let mut query = HashMap::new();
 
@@ -19,4 +20,5 @@ fn main() {
     let result = mb.artist().lookup(&mb, &artist_id, &mut query);
 
     println!("{}", result.unwrap());
+    */
 }

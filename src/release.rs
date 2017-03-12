@@ -11,9 +11,9 @@ use traits::Entity;
 use error::Error;
 use uuid::Uuid;
 use enums::*;
+use utils;
 
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReleaseEvent {
     pub area: Area,
     pub date: String
@@ -35,8 +35,12 @@ impl ReleaseEvent {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Release {
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     pub title: String,
     pub realease_events: Vec<ReleaseEvent>,
@@ -53,13 +57,19 @@ pub struct Release {
     pub date: String,
     pub artist_credit: Vec<ArtistCredit>,
     pub country: String,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub status_id: Uuid,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub packaging_id: Uuid,
     pub media: Vec<Media>,
     pub label: Label,
     pub catalog_number: String,
     pub language: String,
     pub script: String,
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub mbid: Uuid,
     pub annotation: String,
 }
@@ -151,6 +161,7 @@ impl Release {
     }
 }
 
+/*
 impl Entity for Release {
     fn search(&self, client: &super::MusicBrainz, params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
         let mut results : Vec<Release> = Vec::new();
@@ -262,4 +273,9 @@ impl Entity for Release {
 
         Ok(Release::empty())
     }
+}
+*/
+
+impl Default for Release {
+    fn default() -> Release { Release::empty() }
 }

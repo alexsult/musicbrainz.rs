@@ -1,7 +1,12 @@
 use uuid::Uuid;
+use utils;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+#[serde(default)]
 pub struct Area {
+    #[serde(deserialize_with="utils::uuid_from_string")]
+    #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     pub sort_name: String,
     pub name: String,
@@ -36,3 +41,6 @@ impl Area {
     }
 }
 
+impl Default for Area {
+    fn default() -> Area { Area::empty() }
+}
