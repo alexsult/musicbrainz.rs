@@ -75,13 +75,8 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                       client: &super::MusicBrainz, 
                       params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
 
-                let endpoint = match get_endpoint(stringify!(#struct_name)) {
-                    Ok(x) => x,
-                    Err(e) => return Err(Error::AsSlice)
-                };
-
                 let data = match client.get(&format!("{endpoint}",
-                                                     endpoint=endpoint),
+                                                     endpoint=#endpoint),
                                             params) {
                     Ok(x) => x,
                     Err(e) => return Err(Error::AsSlice) 

@@ -1,5 +1,11 @@
 use uuid::Uuid;
 use utils;
+use error::Error;
+use std::collections::HashMap;
+use serde_json;
+use traits::Entity;
+use tag::Tag;
+use alias::Alias;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
@@ -11,7 +17,10 @@ pub struct Area {
     pub sort_name: String,
     pub name: String,
     pub disambiguation: String,
-    pub iso_3166_1_codes: Vec<String>
+    pub iso_3166_1_codes: Vec<String>,
+    pub tags: Vec<Tag>,
+    pub aliases: Vec<Alias>,
+    pub score: String
 }
 
 impl Area {
@@ -19,14 +28,20 @@ impl Area {
                sort_name: String, 
                name: String, 
                disambiguation: String,
-               iso_3166_1_codes: Vec<String>) -> Area { 
+               iso_3166_1_codes: Vec<String>,
+               tags: Vec<Tag>,
+               aliases: Vec<Alias>,
+               score: String) -> Area { 
 
         Area {
             id: id,
             sort_name: sort_name,
             name: name, 
             disambiguation: disambiguation,
-            iso_3166_1_codes: iso_3166_1_codes
+            iso_3166_1_codes: iso_3166_1_codes,
+            tags: tags,
+            aliases: aliases,
+            score: score
         }
     }
 
@@ -36,7 +51,10 @@ impl Area {
             String::new(),
             String::new(),
             String::new(),
-            Vec::new()
+            Vec::new(),
+            Vec::new(),
+            Vec::new(),
+            String::new(),
         )
     }
 }
