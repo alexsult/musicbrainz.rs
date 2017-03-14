@@ -5,6 +5,8 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
+use std::error::Error;
+
 use proc_macro::TokenStream;
 
 // copy paste from:
@@ -27,21 +29,32 @@ pub fn entity(input: TokenStream) -> TokenStream {
 fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
     let struct_name = &ast.ident;
     let struct_result_name = quote::Ident::from(format!("{}SearchResult", struct_name));
+    
+    let endpoint = match &format!("{}", struct_name) as &str{
+        "Artist" => "artist",
+        "Area" => "area",
+        _ => ""
+    };
+
+    let field_result = quote::Ident::from(format!("{}s", endpoint));
+
     quote! {
+		#[derive(Debug, Clone, Serialize, Deserialize)]
+        pub struct #struct_result_name {
+            pub created: String,
+            pub count: i32,
+            pub offset: i32,
+            pub #field_result: Vec<#struct_name>
+        }
+
         impl Entity for #struct_name {
             fn lookup(&self,
                        client: &super::MusicBrainz,
                        entity_id: &Uuid,
                        params: &mut HashMap<&str, &str>) -> Result<Self, Error> {
 
-
-                let endpoint = match get_endpoint(stringify!(#struct_name)) {
-                    Ok(x) => x,
-                    Err(e) => return Err(Error::AsSlice)
-                };
-
                 let data = match client.get(&format!("{endpoint}/{id}", 
-                                                            endpoint=endpoint,
+                                                            endpoint=#endpoint,
                                                             id=entity_id), 
                                                    params) {
                     Ok(x) => x,
@@ -81,7 +94,7 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                     Err(e) => return Err(Error::ParseJson(e))
                 };
 
-                Ok(search_results.results)
+                Ok(search_results.#field_result )
             }
 
         }
