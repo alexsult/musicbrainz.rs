@@ -6,11 +6,15 @@ extern crate serde_json;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
+extern crate brainz_macros;
 
 use std::collections::HashMap;
 use std::io::Read;
 use url::{Url};
 use error::Error;
+
+//use traits::Bob;
 
 #[derive(Debug)]
 pub struct MusicBrainz {
@@ -18,6 +22,12 @@ pub struct MusicBrainz {
     user_agent: String
 }
 
+pub fn get_endpoint(struct_type: &str) -> Result<String,Error> {
+    match struct_type {
+        "Artist" => Ok(String::from("artist")),
+        _ => Err(Error::AsSlice)
+    }
+}
 
 impl MusicBrainz {
     /// Instantiates a new `MusicBrainz` struct.

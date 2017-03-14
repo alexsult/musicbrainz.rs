@@ -1,0 +1,89 @@
+#![recursion_limit = "128"]
+#![feature(concat_idents)]
+extern crate proc_macro;
+extern crate syn;
+#[macro_use]
+extern crate quote;
+
+use proc_macro::TokenStream;
+
+// copy paste from:
+// https://doc.rust-lang.org/beta/book/procedural-macros.html
+#[proc_macro_derive(Entity)]
+pub fn entity(input: TokenStream) -> TokenStream {
+    // Construct a string representation of the type definition
+    let s = input.to_string();
+    
+    // Parse the string representation
+    let ast = syn::parse_macro_input(&s).unwrap();
+
+    // Build the impl
+    let gen = impl_entity(&ast);
+    
+    // Return the generated impl
+    gen.parse().unwrap()
+}
+
+fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
+    let struct_name = &ast.ident;
+    let struct_result_name = quote::Ident::from(format!("{}SearchResult", struct_name));
+    quote! {
+        impl Entity for #struct_name {
+            fn lookup(&self,
+                       client: &super::MusicBrainz,
+                       entity_id: &Uuid,
+                       params: &mut HashMap<&str, &str>) -> Result<Self, Error> {
+
+
+                let endpoint = match get_endpoint(stringify!(#struct_name)) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice)
+                };
+
+                let data = match client.get(&format!("{endpoint}/{id}", 
+                                                            endpoint=endpoint,
+                                                            id=entity_id), 
+                                                   params) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice) 
+                };
+
+                let data_struct: #struct_name =
+                                  match serde_json::from_str(&data) {
+                
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::ParseJson(e))
+                };
+
+                Ok(data_struct)
+            }
+
+            fn search(&self, 
+                      client: &super::MusicBrainz, 
+                      params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
+
+                let endpoint = match get_endpoint(stringify!(#struct_name)) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice)
+                };
+
+                let data = match client.get(&format!("{endpoint}",
+                                                     endpoint=endpoint),
+                                            params) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice) 
+                };
+
+                let mut results: Vec<#struct_name> = Vec::new();
+
+                let search_results: #struct_result_name = match serde_json::from_str(&data) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::ParseJson(e))
+                };
+
+                Ok(search_results.results)
+            }
+
+        }
+    }
+}

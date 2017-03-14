@@ -10,8 +10,10 @@ use area::Area;
 use tag::Tag;
 use serde_json;
 use utils;
+use brainz_macros;
+use super::get_endpoint;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct Artist {
@@ -129,43 +131,6 @@ impl fmt::Display for Artist {
     }
 }
 
-impl Entity for Artist {
-    fn search(&self, 
-              client: &super::MusicBrainz, 
-              params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
-
-        let data = match client.get("artist", params) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::AsSlice) 
-        };
-
-        let search_results: ArtistSearchResult = match serde_json::from_str(&data) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::ParseJson(e))
-        };
-
-        Ok(search_results.artists)
-    }
-
-    fn lookup(&self, 
-              client: &super::MusicBrainz, 
-              entity_id: &Uuid, 
-              params: &mut HashMap<&str, &str>) -> Result<Self, Error> {
-
-        let artist_data = match client.get(&format!("artist/{id}", id=entity_id), params) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::AsSlice) 
-        };
-    
-        let artist_struct: Artist = match serde_json::from_str(&artist_data) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::ParseJson(e))
-        };
-
-        Ok(artist_struct)
-    }
-}
-
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ArtistCredit {
     pub name: String,
@@ -197,20 +162,21 @@ pub struct ArtistSearchResult {
     pub created: String,
     pub count: i32,
     pub offset: i32,
-    pub artists: Vec<Artist>
+    #[serde(rename = "artists")]
+    pub results: Vec<Artist>
 }
 
 impl ArtistSearchResult {
     pub fn new(created: String,
                count: i32,
                offset: i32,
-               artists: Vec<Artist>) -> ArtistSearchResult {
+               results: Vec<Artist>) -> ArtistSearchResult {
 
         ArtistSearchResult {
             created: created,
             count: count,
             offset: offset,
-            artists: artists
+            results: results
         }
     }
     
