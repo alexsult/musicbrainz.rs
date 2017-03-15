@@ -1,5 +1,5 @@
 extern crate musicbrainz;
-//use musicbrainz::*;
+use musicbrainz::*;
 
 /*
 #[test]

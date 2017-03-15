@@ -6,6 +6,7 @@ use serde_json;
 use traits::Entity;
 use tag::Tag;
 use alias::Alias;
+use relation::Relations;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
@@ -18,9 +19,11 @@ pub struct Area {
     pub name: String,
     pub disambiguation: String,
     pub iso_3166_1_codes: Vec<String>,
+    pub iso_3166_2_codes: Vec<String>,
     pub tags: Vec<Tag>,
     pub aliases: Vec<Alias>,
-    pub score: String
+    pub score: String,
+    pub relation_list: Vec<Relations>
 }
 
 impl Area {
@@ -29,9 +32,11 @@ impl Area {
                name: String, 
                disambiguation: String,
                iso_3166_1_codes: Vec<String>,
+               iso_3166_2_codes: Vec<String>,
                tags: Vec<Tag>,
                aliases: Vec<Alias>,
-               score: String) -> Area { 
+               score: String,
+               relation_list: Vec<Relations>) -> Area { 
 
         Area {
             id: id,
@@ -39,9 +44,11 @@ impl Area {
             name: name, 
             disambiguation: disambiguation,
             iso_3166_1_codes: iso_3166_1_codes,
+            iso_3166_2_codes: iso_3166_2_codes,
             tags: tags,
             aliases: aliases,
-            score: score
+            score: score,
+            relation_list: relation_list
         }
     }
 
@@ -54,7 +61,9 @@ impl Area {
             Vec::new(),
             Vec::new(),
             Vec::new(),
+            Vec::new(),
             String::new(),
+            Vec::new()
         )
     }
 }

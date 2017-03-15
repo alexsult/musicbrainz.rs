@@ -11,7 +11,7 @@ use tag::Tag;
 use serde_json;
 use utils;
 use brainz_macros;
-use super::get_endpoint;
+//use super::get_endpoint;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]

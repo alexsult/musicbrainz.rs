@@ -20,7 +20,11 @@ pub struct Event {
     pub event_type: String,
     pub name: String,
     pub life_span: LifeSpan,
-    pub relations: Vec<Relation>
+    pub relations: Vec<Relation>,
+    pub setlist: String,
+    #[serde(deserialize_with="utils::deserialize_bool")]
+    pub canceled: bool,
+    pub time: String
 }
 
 impl Event {
@@ -28,13 +32,19 @@ impl Event {
                event_type: String,
                name: String,
                life_span: LifeSpan,
-               relations: Vec<Relation>) -> Event {
+               relations: Vec<Relation>,
+               setlist: String,
+               canceled: bool,
+               time: String) -> Event {
         Event {
             id: id,
             event_type: event_type,
             name: name,
             life_span: life_span,
-            relations: relations
+            relations: relations,
+            setlist: setlist,
+            canceled: canceled,
+            time: time
         }
     }
 
@@ -44,7 +54,10 @@ impl Event {
             String::new(),
             String::new(),
             LifeSpan::empty(),
-            Vec::new()
+            Vec::new(),
+            String::new(),
+            false,
+            String::new()
         )
     }
 }
