@@ -1,4 +1,5 @@
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
+use enums::Packaging;
 use uuid::Uuid;
 
 pub fn uuid_from_string<D>(deserializer: D) -> Result<Uuid, D::Error>
@@ -26,4 +27,27 @@ pub fn deserialize_bool<D>(deserializer: D) -> Result<bool, D::Error>
     };
 
     Ok(bool_return)
+}
+
+pub fn deserialize_packaging<D>(deserializer: D) -> Result<Packaging, D::Error>
+    where D: Deserializer {
+
+    let packaging_return: Packaging = match Deserialize::deserialize(deserializer) {
+        Ok(x) => x,
+        Err(e) => Packaging::Digipak
+    };
+
+    //let packaging_return = Packaging::NoPack;
+
+    /*
+    if packaging_return  None {
+        packaging_return = Packaging::NoPack;
+    }
+    */
+
+    println!("toto {:?}", packaging_return);
+    println!("toto {}", packaging_return);
+
+    //Ok(Packaging::NoPack)
+    Ok(packaging_return)
 }

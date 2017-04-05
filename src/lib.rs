@@ -8,13 +8,14 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate brainz_macros;
+#[cfg(any(test, feature = "mock"))]
+extern crate mockito;
 
 use std::collections::HashMap;
 use std::io::Read;
 use url::{Url};
 use error::Error;
 
-//use traits::Bob;
 
 #[derive(Debug)]
 pub struct MusicBrainz {
@@ -55,7 +56,18 @@ impl MusicBrainz {
 
     //fn get(&self, url: &str, params: &HashMap<&str, &str>) -> json::Result<json::JsonValue> {
     fn get(&self, url: &str, params: &HashMap<&str, &str>) -> Result<String, Error> {
+        #[cfg(any(test, feature = "mock"))]
+        let base_uri = mockito::SERVER_URL;
+
+        #[cfg(not(any(test, feature = "mock")))]
         let base_uri = "https://musicbrainz.org/ws/2";
+        
+        #[cfg(test)]
+        println!("test");
+
+        #[cfg(feature = "mock")]
+        println!("mock");
+
         let mut endpoint = Url::parse(&format!("{}/{}", base_uri, url))
             .expect("error parsing URL");
 
@@ -63,6 +75,8 @@ impl MusicBrainz {
         for (param, val) in params {
             endpoint.query_pairs_mut().append_pair(param, val);
         }
+
+        println!("ENDPOINT {}", endpoint);
 
         let user_agent = self.user_agent.clone();
         let mut res = self.client.get(endpoint)
@@ -72,6 +86,8 @@ impl MusicBrainz {
 
         let mut buf = String::new();
         res.read_to_string(&mut buf).expect("failed to read response body to string");
+
+        println!("buf {}", buf);
 
         Ok(buf)
     }

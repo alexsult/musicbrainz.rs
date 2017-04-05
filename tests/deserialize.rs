@@ -18,6 +18,22 @@ fn area_parsing(){
 }
 
 #[test]
+fn release_browse_parsing(){
+    let json_data = r#"{
+        "releases": [
+            {
+                "packaging": null
+            }    
+        ],
+        "release-offset": 0,
+        "release-count": 58
+    }"#;
+    
+    let res: release::ReleaseBrowseResult = serde_json::from_str(json_data).unwrap();
+    println!("res {:?}", res);
+}
+
+#[test]
 fn artist_parsing(){
     let json_data = r#"{
         "disambiguation": "",

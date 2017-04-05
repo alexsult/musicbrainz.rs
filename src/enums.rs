@@ -64,7 +64,9 @@ pub enum AlbumType {
     Audiobook,
     Live,
     Remix,
+    #[serde(rename="DJ-mix")]
     DjMix,
+    #[serde(rename="Mixtape/Street")]
     MixtapeStreet,
     Other,
 }
@@ -121,7 +123,7 @@ impl fmt::Display for AlbumType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum ReleaseStatus {
     Official,
-    Promotional,
+    Promotion,
     Bootleg,
     PseudoRelease
 }
@@ -136,7 +138,7 @@ impl FromStr for ReleaseStatus {
     fn from_str(s: &str) -> Result<ReleaseStatus, ()> {
         match s {
             "Official" => Ok(ReleaseStatus::Official),
-            "Promotional" => Ok(ReleaseStatus::Promotional),
+            "Promotion" => Ok(ReleaseStatus::Promotion),
             "Bootleg" => Ok(ReleaseStatus::Bootleg),
             "Pseudo Release" => Ok(ReleaseStatus::PseudoRelease),
             _ => Err(())
@@ -148,7 +150,7 @@ impl fmt::Display for ReleaseStatus {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
             ReleaseStatus::Official => write!(f,"Official"),
-            ReleaseStatus::Promotional => write!(f,"Promotional"),
+            ReleaseStatus::Promotion => write!(f,"Promotion"),
             ReleaseStatus::Bootleg => write!(f,"Bootleg"),
             ReleaseStatus::PseudoRelease=> write!(f,"Pseudo Release")
         }
@@ -157,19 +159,30 @@ impl fmt::Display for ReleaseStatus {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Packaging {
+    #[serde(rename="Jewel Case")]
     JewelCase,
+    #[serde(rename="Super Jewel Box/Case")]
     SuperJewelCase,
+    #[serde(rename="Slim Jewel Case")]
     SlimJewelCase,
     Digipak,
+    #[serde(rename="Cardboard/Paper Sleeve")]
     CardboardSleeve,
+    #[serde(rename="Keep Case")]
     KeepCase,
+    #[serde(rename="None")]
     NoPack,
+    #[serde(rename="Cassette Case")]
     CassetteCase,
     Book,
     Fatbox,
+    #[serde(rename="Snap Case")]
     SnapCase,
+    #[serde(rename="Gatefold Cover")]
     GatefoldCover,
-    DiscboxSlider
+    #[serde(rename="Discbox Slider")]
+    DiscboxSlider,
+    Other
 }
 
 impl Default for Packaging {
@@ -194,7 +207,8 @@ impl FromStr for Packaging {
             "Snap Case" => Ok(Packaging::SnapCase),
             "Gatefold Cover" => Ok(Packaging::GatefoldCover),
             "Discbox Slider" => Ok(Packaging::DiscboxSlider),
-            _ => Err(())
+            "Other" => Ok(Packaging::Other),
+            _ => Ok(Packaging::NoPack)
         }
     }
 }
@@ -214,7 +228,8 @@ impl fmt::Display for Packaging {
             Packaging::Fatbox => write!(f,"Fatbox"),
             Packaging::SnapCase => write!(f,"Snap Case"),
             Packaging::GatefoldCover => write!(f,"Gatefold Cover"),
-            Packaging::DiscboxSlider => write!(f,"Discbox Slider")
+            Packaging::DiscboxSlider => write!(f,"Discbox Slider"),
+            Packaging::Other => write!(f,"Other")
         }
     }
 }

@@ -11,6 +11,7 @@ use tag::Tag;
 use serde_json;
 use utils;
 use brainz_macros;
+use alias::Alias;
 //use super::get_endpoint;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
@@ -43,6 +44,7 @@ pub struct Artist {
     pub isnis: Vec<String>,
     pub ipis: Vec<String>,
     pub score: i32,
+    pub aliases: Vec<Alias>
 }
 
 impl Artist {
@@ -63,7 +65,8 @@ impl Artist {
                end_area: Area,
                isnis: Vec<String>,
                ipis: Vec<String>,
-               score: i32) -> Artist {
+               score: i32,
+               aliases: Vec<Alias>) -> Artist {
         Artist {
             id: id,
             name: name,
@@ -82,7 +85,8 @@ impl Artist {
             end_area: end_area,
             isnis: isnis,
             ipis: ipis,
-            score: score
+            score: score,
+            aliases: aliases
         }
     }
 
@@ -105,7 +109,8 @@ impl Artist {
             Area::empty(),
             Vec::new(),
             Vec::new(),
-            0
+            0,
+            Vec::new()
         )
     }
 }
@@ -132,16 +137,22 @@ impl fmt::Display for Artist {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ArtistCredit {
     pub name: String,
+    pub sort_name: String,
     pub joinphrase: String,
     pub artist: Artist
 }
 
 impl ArtistCredit {
-    pub fn new(name: String, joinphrase: String, artist: Artist) -> ArtistCredit {
+    pub fn new(name: String, 
+               sort_name: String,
+               joinphrase: String, 
+               artist: Artist) -> ArtistCredit {
         ArtistCredit {
             name: name,
+            sort_name: sort_name,
             joinphrase: joinphrase,
             artist: artist
         }
@@ -151,7 +162,12 @@ impl ArtistCredit {
         ArtistCredit::new(
             String::new(),
             String::new(),
+            String::new(),
             Artist::empty()
         )
     }
+}
+
+impl Default for ArtistCredit {
+    fn default() -> ArtistCredit { ArtistCredit::empty() }
 }

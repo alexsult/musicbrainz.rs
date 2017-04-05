@@ -46,4 +46,6 @@ pub trait Entity: Sized {
     /// let result = musicbrainz.artist().lookup(&musicbrainz, &artist_id, &mut query);
     /// assert_eq!(result.unwrap(), compare)
     fn lookup(&self, client: &super::MusicBrainz, entity_id: &Uuid, params: &mut HashMap<&str, &str>) -> Result<Self, Error>;
+    
+    fn browse(&self, client: &super::MusicBrainz, params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error>;
 }

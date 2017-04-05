@@ -12,8 +12,11 @@ use error::Error;
 use uuid::Uuid;
 use enums::*;
 use utils;
+use serde_json;
+use brainz_macros;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(default)]
 pub struct ReleaseEvent {
     pub area: Area,
     pub date: String
@@ -35,7 +38,11 @@ impl ReleaseEvent {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+impl Default for ReleaseEvent {
+    fn default() -> ReleaseEvent { ReleaseEvent::empty() }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct Release {
@@ -47,8 +54,8 @@ pub struct Release {
     pub asin: String, 
     pub cover_art_archive: CoverArtArchive,
     pub text_representation: TextRepresentation,
-    pub packaging: Packaging,
-    pub status: ReleaseStatus, 
+    pub packaging: Option<Packaging>,
+    pub status: Option<ReleaseStatus>, 
     pub disambiguation: String,
     pub release_group: ReleaseGroup,
     pub quality: String,
@@ -72,6 +79,7 @@ pub struct Release {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub mbid: Uuid,
     pub annotation: String,
+    pub score: u8
 }
 
 impl Release {
@@ -81,8 +89,8 @@ impl Release {
                asin: String,
                cover_art_archive: CoverArtArchive,
                text_representation: TextRepresentation,
-               packaging: Packaging,
-               status: ReleaseStatus,
+               packaging: Option<Packaging>,
+               status: Option<ReleaseStatus>,
                disambiguation: String,
                release_group: ReleaseGroup,
                quality: String,
@@ -99,7 +107,8 @@ impl Release {
                language: String,
                script: String,
                mbid: Uuid,
-               annotation: String) -> Release{ 
+               annotation: String,
+               score: u8) -> Release{ 
 
         Release {
             id: id,
@@ -126,7 +135,8 @@ impl Release {
             language: language,
             script: script,
             mbid: mbid,
-            annotation: annotation
+            annotation: annotation,
+            score: score
         }
     }
 
@@ -138,8 +148,8 @@ impl Release {
             String::new(),
             CoverArtArchive::empty(),
             TextRepresentation::empty(),
-            Packaging::NoPack,
-            ReleaseStatus::Official,
+            None,
+            None,
             String::new(),
             ReleaseGroup::empty(),
             String::new(),
@@ -156,125 +166,11 @@ impl Release {
             String::new(),
             String::new(),
             Uuid::nil(),
-            String::new()
+            String::new(),
+            0
         )
     }
 }
-
-/*
-impl Entity for Release {
-    fn search(&self, client: &super::MusicBrainz, params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
-        let mut results : Vec<Release> = Vec::new();
-        Ok(results)
-    }
-
-    fn lookup(&self, client: &super::MusicBrainz, entity_id: &Uuid, params: &mut HashMap<&str, &str>) -> Result<Self, Error> {
-        let release_data = match client.get(&format!("release/{id}", id=entity_id), params) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::ParseJson(e))
-        };
-
-
-        if !release_data["error"].is_null() {
-            let error_msg = release_data["error"].to_string();
-            println!("ERR {}", error_msg);
-            return Err(Error::Http(error_msg));
-        }
-
-        let release_id = match release_data["id"].as_str() {
-            Some(x) => {
-                match Uuid::parse_str(x) {
-                    Ok(y) => y,
-                    Err(e) => return Err(Error::ParseUuid(e))
-                }
-            },
-            None => return Err(Error::AsSlice)
-        };
-        
-        let mut release_events: Vec<ReleaseEvent> = Vec::new();
-        if !release_data["release-events"].is_null() {
-            for release_event in release_data["release-events"].members() {
-                let mut iso_3166_1_codes: Vec<String> = Vec::new();
-                for iso_3166_1_code in release_event["area"]["iso-3166-1-codes"].members() {
-                    iso_3166_1_codes.push(iso_3166_1_code.to_string());
-                }
-
-                let area_id =  match release_event["area"]["id"].as_str() {
-                    Some(x) => {
-                        match Uuid::parse_str(x) {
-                            Ok(y) => y,
-                            Err(e) => return Err(Error::ParseUuid(e))
-                        }
-                    },
-                    None => return Err(Error::AsSlice)
-                };
-
-                let mut area = Area::new(
-                    area_id,
-                    release_event["area"]["sort-name"].to_string(),
-                    release_event["area"]["name"].to_string(),
-                    release_event["area"]["disambiguation"].to_string(),
-                    iso_3166_1_codes
-                );
-
-                release_events.push(
-                    ReleaseEvent::new(
-                        area,
-                        release_event["area"]["date"].to_string()
-                    )
-                );
-            }
-        }
-
-        let mut cover_art_archive: CoverArtArchive = CoverArtArchive::empty();
-        if !release_data["cover-art-archive"].is_null() {
-            cover_art_archive.back = release_data["cover-art-archive"]["back"].as_bool().unwrap();
-            cover_art_archive.front = release_data["cover-art-archive"]["front"].as_bool().unwrap();
-            cover_art_archive.darkened = release_data["cover-art-archive"]["darkened"].as_bool().unwrap();
-            cover_art_archive.count = release_data["cover-art-archive"]["count"].as_i32().unwrap();
-            cover_art_archive.artwork = release_data["cover-art-archive"]["artwork"].as_bool().unwrap();
-        }
-
-        let mut text_representation: TextRepresentation = TextRepresentation::empty();
-        if !release_data["text-representation"].is_null() {
-            text_representation.script = release_data["text-representation"]["script"].to_string();
-            text_representation.language = release_data["text-representation"]["language"].to_string();
-        }
-
-        let mut packaging: Packaging = Packaging::NoPack;
-        if !release_data["packaging"].is_null() {
-            packaging = match release_data["packaging"].as_str() {
-                Some(x) => x.parse::<Packaging>().unwrap(),
-                None => return Err(Error::AsSlice)
-            };
-        }
-
-        let status = match release_data["status"].as_str() {
-                Some(x) => x.parse::<ReleaseStatus>().unwrap(),
-                None => return Err(Error::AsSlice)
-            };
-
-        let release_group = match ReleaseGroup::extract_release_group(&release_data["release-group"]) {
-            Ok(x) => x,
-            Err(e) => return Err(Error::AsSlice)
-        };
-
-        println!("{}",release_data["title"].to_string());
-        //println!("{}",release_data);
-        println!("{}",release_id);
-        //println!("{}",release_events);
-        println!("{}",release_data["asin"].to_string());
-        println!("{:?}",cover_art_archive);
-        println!("{:?}",text_representation);
-        println!("{:?}",packaging);
-        println!("{:?}",status);
-        println!("{}",release_data["disambiguation"].to_string());
-        println!("{:?}", release_group);
-
-        Ok(Release::empty())
-    }
-}
-*/
 
 impl Default for Release {
     fn default() -> Release { Release::empty() }

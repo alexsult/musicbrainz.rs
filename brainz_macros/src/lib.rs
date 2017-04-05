@@ -29,14 +29,22 @@ pub fn entity(input: TokenStream) -> TokenStream {
 fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
     let struct_name = &ast.ident;
     let struct_result_name = quote::Ident::from(format!("{}SearchResult", struct_name));
+    let struct_browse_name = quote::Ident::from(format!("{}BrowseResult", struct_name));
     
-    let endpoint = match &format!("{}", struct_name) as &str{
+    /*
+    let endpoint = match &format!("{}", struct_name) as &str {
         "Artist" => "artist",
         "Area" => "area",
+        "Release" => "release",
         _ => ""
     };
+    */
+    let endpoint = (format!("{}", struct_name) as String).to_lowercase();
+
 
     let field_result = quote::Ident::from(format!("{}s", endpoint));
+    let field_offset = quote::Ident::from(format!("{}_offset", endpoint));
+    let field_count = quote::Ident::from(format!("{}_count", endpoint));
 
     quote! {
 		#[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,6 +52,14 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
             pub created: String,
             pub count: i32,
             pub offset: i32,
+            pub #field_result: Vec<#struct_name>
+        }
+
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        #[serde(rename_all = "kebab-case")]
+        pub struct #struct_browse_name {
+            pub #field_offset: i32,
+            pub #field_count: i32,
             pub #field_result: Vec<#struct_name>
         }
 
@@ -92,6 +108,26 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                 Ok(search_results.#field_result )
             }
 
+            fn browse(&self, 
+                      client: &super::MusicBrainz, 
+                      params: &mut HashMap<&str, &str>) -> Result<Vec<Self>, Error> {
+
+                let data = match client.get(&format!("{endpoint}",
+                                                     endpoint=#endpoint),
+                                            params) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::AsSlice) 
+                };
+
+                let mut results: Vec<#struct_name> = Vec::new();
+
+                let search_results: #struct_browse_name = match serde_json::from_str(&data) {
+                    Ok(x) => x,
+                    Err(e) => return Err(Error::ParseJson(e))
+                };
+
+                Ok(search_results.#field_result )
+            }
         }
     }
 }
