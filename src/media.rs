@@ -11,23 +11,23 @@ pub struct Media {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub format_id: Uuid,
     pub tracks: Vec<Track>,
-    pub format: String,
+    pub format: Option<String>,
     pub position: i32,
     pub track_count: i32,
     pub discs: Vec<Disc>,
     pub track_offset: i32,
-    pub title: String
+    pub title: Option<String>
 }
 
 impl Media {
     pub fn new(format_id: Uuid,
                tracks: Vec<Track>,
-               format: String,
+               format: Option<String>,
                position: i32,
                track_count: i32,
                discs: Vec<Disc>,
                track_offset: i32,
-               title: String) -> Media {
+               title: Option<String>) -> Media {
 
         Media {
             format_id: format_id,
@@ -45,12 +45,12 @@ impl Media {
         Media::new(
             Uuid::nil(),
             Vec::new(),
-            String::new(),
+            None,
             0,
             0,
             Vec::new(),
             0,
-            String::new()
+            None
         )
     }
 }

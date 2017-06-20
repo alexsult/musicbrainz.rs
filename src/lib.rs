@@ -8,8 +8,6 @@ extern crate serde;
 extern crate serde_derive;
 #[macro_use]
 extern crate brainz_macros;
-#[cfg(any(test, feature = "mock"))]
-extern crate mockito;
 
 use std::collections::HashMap;
 use std::io::Read;
@@ -56,18 +54,8 @@ impl MusicBrainz {
 
     //fn get(&self, url: &str, params: &HashMap<&str, &str>) -> json::Result<json::JsonValue> {
     fn get(&self, url: &str, params: &HashMap<&str, &str>) -> Result<String, Error> {
-        #[cfg(any(test, feature = "mock"))]
-        let base_uri = mockito::SERVER_URL;
-
-        #[cfg(not(any(test, feature = "mock")))]
         let base_uri = "https://musicbrainz.org/ws/2";
         
-        #[cfg(test)]
-        println!("test");
-
-        #[cfg(feature = "mock")]
-        println!("mock");
-
         let mut endpoint = Url::parse(&format!("{}/{}", base_uri, url))
             .expect("error parsing URL");
 

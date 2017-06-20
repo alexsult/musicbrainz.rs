@@ -15,27 +15,27 @@ pub struct Area {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub sort_name: String,
-    pub name: String,
-    pub disambiguation: String,
+    pub sort_name: Option<String>,
+    pub name: Option<String>,
+    pub disambiguation: Option<String>,
     pub iso_3166_1_codes: Vec<String>,
     pub iso_3166_2_codes: Vec<String>,
     pub tags: Vec<Tag>,
     pub aliases: Vec<Alias>,
-    pub score: String,
+    pub score: Option<String>,
     pub relation_list: Vec<Relations>
 }
 
 impl Area {
     pub fn new(id: Uuid, 
-               sort_name: String, 
-               name: String, 
-               disambiguation: String,
+               sort_name: Option<String>, 
+               name: Option<String>, 
+               disambiguation: Option<String>,
                iso_3166_1_codes: Vec<String>,
                iso_3166_2_codes: Vec<String>,
                tags: Vec<Tag>,
                aliases: Vec<Alias>,
-               score: String,
+               score: Option<String>,
                relation_list: Vec<Relations>) -> Area { 
 
         Area {
@@ -55,14 +55,14 @@ impl Area {
     pub fn empty() -> Area {
         Area::new(
             Uuid::nil(),
-            String::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
+            None,
             Vec::new(),
             Vec::new(),
             Vec::new(),
             Vec::new(),
-            String::new(),
+            None,
             Vec::new()
         )
     }

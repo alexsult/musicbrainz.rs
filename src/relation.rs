@@ -9,35 +9,35 @@ use utils;
 #[serde(default)]
 pub struct Relation {
     #[serde(rename="type")]
-    pub relation_type: String,
+    pub relation_type: Option<String>,
     #[serde(rename="type-id")]
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub relation_type_id: Uuid,
-    pub direction: String,
+    pub direction: Option<String>,
     pub artist: Artist,
     pub place: Place,
     pub attributes: Vec<String>,
-    pub begin: String,
-    pub end: String,
+    pub begin: Option<String>,
+    pub end: Option<String>,
     #[serde(deserialize_with="utils::deserialize_bool")]
     pub ended: bool,
-    pub target_credit: String,
+    pub target_credit: Option<String>,
     pub event: Event,
     pub ordering_key: i32
 }
 
 impl Relation {
-    pub fn new(relation_type: String,
+    pub fn new(relation_type: Option<String>,
                relation_type_id: Uuid,
-               direction: String,
+               direction: Option<String>,
                artist: Artist,
                place: Place,
                attributes: Vec<String>,
-               begin: String,
-               end: String,
+               begin: Option<String>,
+               end: Option<String>,
                ended: bool,
-               target_credit: String,
+               target_credit: Option<String>,
                event: Event,
                ordering_key: i32) -> Relation {
 
@@ -59,16 +59,16 @@ impl Relation {
 
     pub fn empty() -> Relation {
         Relation::new(
-            String::new(),
+            None,
             Uuid::nil(),
-            String::new(),
+            None,
             Artist::empty(),
             Place::empty(),
             Vec::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
             false,
-            String::new(),
+            None,
             Event::empty(),
             0
         )

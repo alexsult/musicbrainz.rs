@@ -2,12 +2,12 @@
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct TextRepresentation {
-    pub script: String,
-    pub language: String
+    pub script: Option<String>,
+    pub language: Option<String>
 }
 
 impl TextRepresentation {
-    pub fn new(script: String, language: String) -> TextRepresentation {
+    pub fn new(script: Option<String>, language: Option<String>) -> TextRepresentation {
         TextRepresentation{
             script: script,
             language: language
@@ -16,8 +16,8 @@ impl TextRepresentation {
 
     pub fn empty() -> TextRepresentation {
         TextRepresentation::new(
-            String::new(),
-            String::new()
+            None,
+            None
         )
     }
 }

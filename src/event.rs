@@ -17,25 +17,25 @@ pub struct Event {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     #[serde(rename="type")]
-    pub event_type: String,
-    pub name: String,
+    pub event_type: Option<String>,
+    pub name: Option<String>,
     pub life_span: LifeSpan,
     pub relations: Vec<Relation>,
-    pub setlist: String,
+    pub setlist: Option<String>,
     #[serde(deserialize_with="utils::deserialize_bool")]
     pub canceled: bool,
-    pub time: String
+    pub time: Option<String>
 }
 
 impl Event {
     pub fn new(id: Uuid,
-               event_type: String,
-               name: String,
+               event_type: Option<String>,
+               name: Option<String>,
                life_span: LifeSpan,
                relations: Vec<Relation>,
-               setlist: String,
+               setlist: Option<String>,
                canceled: bool,
-               time: String) -> Event {
+               time: Option<String>) -> Event {
         Event {
             id: id,
             event_type: event_type,
@@ -51,13 +51,13 @@ impl Event {
     pub fn empty() -> Event {
         Event::new(
             Uuid::nil(),
-            String::new(),
-            String::new(),
+            None,
+            None,
             LifeSpan::empty(),
             Vec::new(),
-            String::new(),
+            None,
             false,
-            String::new()
+            None
         )
     }
 }

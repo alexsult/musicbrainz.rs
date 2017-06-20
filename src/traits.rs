@@ -38,7 +38,7 @@ pub trait Entity: Sized {
     /// let mut compare = musicbrainz.artist();
     ///
     /// compare.id = Uuid::parse_str("4a00ec9d-c635-463a-8cd4-eb61725f0c60").expect("failed to parse artist ID as Uuid");
-    /// compare.name = String::from("deadmau5");
+    /// compare.name = Some(String::from("deadmau5"));
     ///
     /// query.insert("inc", "tags+release-groups");
     ///

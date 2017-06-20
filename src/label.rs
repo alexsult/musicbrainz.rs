@@ -11,35 +11,35 @@ pub struct Label {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub name: String,
+    pub name: Option<String>,
     pub ipis: Vec<String>,
     pub isnis: Vec<String>,
     pub life_span: LifeSpan,
     pub area: Area,
-    pub label_type: String,
+    pub label_type: Option<String>,
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub type_id: Uuid,
-    pub sort_name: String,
+    pub sort_name: Option<String>,
     pub label_code: i32,
-    pub disambiguation: String,
-    pub country: String,
+    pub disambiguation: Option<String>,
+    pub country: Option<String>,
     pub releases: Vec<Release>
 }
 
 impl Label {
     pub fn new(id: Uuid,
-               name: String,
+               name: Option<String>,
                ipis: Vec<String>,
                isnis: Vec<String>,
                life_span: LifeSpan,
                area: Area,
-               label_type: String,
+               label_type: Option<String>,
                type_id: Uuid,
-               sort_name: String,
+               sort_name: Option<String>,
                label_code: i32,
-               disambiguation: String,
-               country: String,
+               disambiguation: Option<String>,
+               country: Option<String>,
                releases: Vec<Release>) -> Label {
     
         Label {
@@ -63,17 +63,17 @@ impl Label {
     pub fn empty() -> Label {
         Label::new(
             Uuid::nil(),
-            String::new(),
+            None,
             Vec::new(),
             Vec::new(),
             LifeSpan::empty(),
             Area::empty(),
-            String::new(),
+            None,
             Uuid::nil(),
-            String::new(),
+            None,
             0,
-            String::new(),
-            String::new(),
+            None,
+            None,
             Vec::new()
         )
     }
@@ -87,12 +87,12 @@ impl Default for Label {
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct LabelInfo {
-    pub catalog_number: String,
+    pub catalog_number: Option<String>,
     pub label: Label
 }
 
 impl LabelInfo {
-    pub fn new(catalog_number: String, label: Label) -> LabelInfo{
+    pub fn new(catalog_number: Option<String>, label: Label) -> LabelInfo{
         LabelInfo {
             catalog_number: catalog_number,
             label: label
@@ -101,7 +101,7 @@ impl LabelInfo {
 
     pub fn empty() -> LabelInfo {
         LabelInfo::new(
-            String::new(),
+            None,
             Label::empty()
         )
     }

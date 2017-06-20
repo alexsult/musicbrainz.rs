@@ -71,20 +71,23 @@ fn artist_parsing(){
             "end": null
         }}"#;
     
-    //let json_parsed = json::parse(json_data).unwrap();
-    //let res: artist::Artist = artist::Artist::extract_artist(&json_parsed).unwrap(); 
     let res: artist::Artist = serde_json::from_str(json_data).unwrap();
 }
 
 #[test]
 fn life_span_parsing() {
     let json_data = r#"{
-        "ended": null,
         "begin": "1981-01-05",
         "end": null
         }"#;
     
-    let res: life_span::LifeSpan = serde_json::from_str(json_data).unwrap();
+    let res: life_span::LifeSpan = match serde_json::from_str(json_data) {
+        Ok(val) => val,
+        Err(err) => 
+            panic!("called `Result::unwrap()` on an `Err` value: {:?}", err),
+    };
+
+    println!("{:?}",res);
 }
 
 #[test]

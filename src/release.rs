@@ -19,11 +19,11 @@ use brainz_macros;
 #[serde(default)]
 pub struct ReleaseEvent {
     pub area: Area,
-    pub date: String
+    pub date: Option<String>
 }
 
 impl ReleaseEvent {
-    pub fn new(area: Area, date: String) -> ReleaseEvent{ 
+    pub fn new(area: Area, date: Option<String>) -> ReleaseEvent{ 
         ReleaseEvent {
             area: area,
             date: date
@@ -33,7 +33,7 @@ impl ReleaseEvent {
     pub fn empty() -> ReleaseEvent {
         ReleaseEvent::new(
             Area::empty(),
-            String::new()
+            None
         )
     }
 }
@@ -49,21 +49,21 @@ pub struct Release {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub title: String,
+    pub title: Option<String>,
     pub realease_events: Vec<ReleaseEvent>,
-    pub asin: String, 
+    pub asin: Option<String>, 
     pub cover_art_archive: CoverArtArchive,
     pub text_representation: TextRepresentation,
     pub packaging: Option<Packaging>,
     pub status: Option<ReleaseStatus>, 
-    pub disambiguation: String,
+    pub disambiguation: Option<String>,
     pub release_group: ReleaseGroup,
-    pub quality: String,
-    pub barcode: String,
+    pub quality: Option<String>,
+    pub barcode: Option<String>,
     pub label_info: Vec<LabelInfo>,
-    pub date: String,
+    pub date: Option<String>,
     pub artist_credit: Vec<ArtistCredit>,
-    pub country: String,
+    pub country: Option<String>,
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub status_id: Uuid,
@@ -72,42 +72,42 @@ pub struct Release {
     pub packaging_id: Uuid,
     pub media: Vec<Media>,
     pub label: Label,
-    pub catalog_number: String,
-    pub language: String,
-    pub script: String,
+    pub catalog_number: Option<String>,
+    pub language: Option<String>,
+    pub script: Option<String>,
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub mbid: Uuid,
-    pub annotation: String,
+    pub annotation: Option<String>,
     pub score: u8
 }
 
 impl Release {
     pub fn new(id: Uuid, 
-               title: String, 
+               title: Option<String>, 
                realease_events: Vec<ReleaseEvent>,
-               asin: String,
+               asin: Option<String>,
                cover_art_archive: CoverArtArchive,
                text_representation: TextRepresentation,
                packaging: Option<Packaging>,
                status: Option<ReleaseStatus>,
-               disambiguation: String,
+               disambiguation: Option<String>,
                release_group: ReleaseGroup,
-               quality: String,
-               barcode: String,
+               quality: Option<String>,
+               barcode: Option<String>,
                label_info: Vec<LabelInfo>,
-               date: String,
+               date: Option<String>,
                artist_credit: Vec<ArtistCredit>,
-               country: String,
+               country: Option<String>,
                status_id: Uuid,
                packaging_id: Uuid,
                media: Vec<Media>,
                label: Label,
-               catalog_number: String,
-               language: String,
-               script: String,
+               catalog_number: Option<String>,
+               language: Option<String>,
+               script: Option<String>,
                mbid: Uuid,
-               annotation: String,
+               annotation: Option<String>,
                score: u8) -> Release{ 
 
         Release {
@@ -143,30 +143,30 @@ impl Release {
     pub fn empty() -> Release {
         Release::new(
             Uuid::nil(),
-            String::new(),
+            None,
             Vec::new(),
-            String::new(),
+            None,
             CoverArtArchive::empty(),
             TextRepresentation::empty(),
             None,
             None,
-            String::new(),
+            None,
             ReleaseGroup::empty(),
-            String::new(),
-            String::new(),
+            None,
+            None,
             Vec::new(),
-            String::new(),
+            None,
             Vec::new(),
-            String::new(),
+            None,
             Uuid::nil(),
             Uuid::nil(),
             Vec::new(),
             Label::empty(),
-            String::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
+            None,
             Uuid::nil(),
-            String::new(),
+            None,
             0
         )
     }

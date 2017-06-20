@@ -4,27 +4,27 @@ use utils;
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct Alias {
-    pub sort_name: String,
-    pub name: String,
-    pub locale: String,
+    pub sort_name: Option<String>,
+    pub name: Option<String>,
+    pub locale: Option<String>,
     #[serde(rename = "type")]
-    pub alias_type: String,
+    pub alias_type: Option<String>,
     #[serde(deserialize_with="utils::deserialize_bool")]
     pub primary: bool,
-    pub begin_date: String,
-    pub end_date: String,
-    pub score: String
+    pub begin_date: Option<String>,
+    pub end_date: Option<String>,
+    pub score: Option<String>
 }
 
 impl Alias {
-    pub fn new(sort_name: String,
-               name: String,
-               locale: String,
-               alias_type: String,
+    pub fn new(sort_name: Option<String>,
+               name: Option<String>,
+               locale: Option<String>,
+               alias_type: Option<String>,
                primary: bool,
-               begin_date: String,
-               end_date: String,
-               score: String) -> Alias {
+               begin_date: Option<String>,
+               end_date: Option<String>,
+               score: Option<String>) -> Alias {
         Alias{
             sort_name: sort_name,
             name: name,
@@ -39,14 +39,14 @@ impl Alias {
 
     pub fn empty() -> Alias {
         Alias::new(
-            String::new(),
-            String::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
+            None,
+            None,
             false,
-            String::new(),
-            String::new(),
-            String::new()
+            None,
+            None,
+            None
         )
     }
 }

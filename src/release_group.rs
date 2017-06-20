@@ -11,8 +11,8 @@ use utils;
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct ReleaseGroup {
-    pub title: String,
-    pub release_date: String,
+    pub title: Option<String>,
+    pub release_date: Option<String>,
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
@@ -25,8 +25,8 @@ pub struct ReleaseGroup {
 }
 
 impl ReleaseGroup {
-    pub fn new(title: String, 
-               release_date: String, 
+    pub fn new(title: Option<String>, 
+               release_date: Option<String>, 
                id: Uuid, 
                artist: Uuid, 
                artist_credit: Vec<ArtistCredit>,
@@ -46,8 +46,8 @@ impl ReleaseGroup {
 
     pub fn empty() -> ReleaseGroup {
         ReleaseGroup::new(
-            String::new(),
-            String::new(),
+            None,
+            None,
             Uuid::nil(),
             Uuid::nil(),
             Vec::new(),
@@ -69,7 +69,7 @@ impl PartialEq for ReleaseGroup {
 
 impl fmt::Display for ReleaseGroup {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{primary} {name}", primary=self.primary_type, name=self.title);
+        writeln!(f, "{primary} {name}", primary=self.primary_type, name=self.title.as_ref().unwrap());
         writeln!(f, "Id: {id}", id=self.id)
     }
 }

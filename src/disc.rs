@@ -4,14 +4,14 @@
 pub struct Disc {
     pub sectors: i32,
     pub offset_count: i32,
-    pub id: String,
+    pub id: Option<String>,
     pub offsets: Vec<i32>
 }
 
 impl Disc {
     pub fn new(sectors: i32,
                offset_count: i32,
-               id: String,
+               id: Option<String>,
                offsets: Vec<i32>) -> Disc {
 
         Disc {
@@ -26,7 +26,7 @@ impl Disc {
         Disc::new(
             0,
             0,
-            String::new(),
+            None,
             Vec::new()
         )
     }

@@ -12,18 +12,18 @@ pub struct Instrument {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub score: String,
+    pub score: Option<String>,
     pub aliases: Vec<Alias>,
     #[serde(rename = "type")]
-    pub instrument_type: String,
+    pub instrument_type: Option<String>,
     pub tags: Vec<Tag>
 }
 
 impl Instrument {
     pub fn new(id: Uuid,
-               score: String,
+               score: Option<String>,
                aliases: Vec<Alias>,
-               instrument_type: String,
+               instrument_type: Option<String>,
                tags: Vec<Tag>) -> Instrument {
         Instrument {
             id: id,
@@ -37,9 +37,9 @@ impl Instrument {
     pub fn empty() -> Instrument { 
         Instrument::new(
             Uuid::nil(),
-            String::new(),
+            None,
             Vec::new(),
-            String::new(),
+            None,
             Vec::new()
         )
     }

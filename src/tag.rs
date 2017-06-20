@@ -1,12 +1,12 @@
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Tag {
-    pub name: String,
+    pub name: Option<String>,
     pub count: i32
 }
 
 impl Tag {
-    pub fn new(name: String,
+    pub fn new(name: Option<String>,
                count: i32) -> Tag {
         Tag {
             name: name,
@@ -16,7 +16,7 @@ impl Tag {
 
     pub fn empty() -> Tag {
         Tag::new(
-            String::new(),
+            None,
             0
         )
     }

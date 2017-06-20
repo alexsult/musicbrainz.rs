@@ -17,26 +17,26 @@ pub struct Work {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
     #[serde(rename="type")]
-    pub work_type: String,
-    pub title: String,
+    pub work_type: Option<String>,
+    pub title: Option<String>,
     pub artist_credit: ArtistCredit,
-    pub disambiguation: String,
+    pub disambiguation: Option<String>,
     pub iwcs: Vec<String>,
     pub relations: Vec<Relation>,
     pub tags: Vec<Tag>,
-    pub language: String
+    pub language: Option<String>
 }
 
 impl Work {
     pub fn new(id: Uuid,
-               work_type: String,
-               title: String,
+               work_type: Option<String>,
+               title: Option<String>,
                artist_credit: ArtistCredit,
-               disambiguation: String,
+               disambiguation: Option<String>,
                iwcs: Vec<String>,
                relations: Vec<Relation>,
                tags: Vec<Tag>,
-               language: String) -> Work {
+               language: Option<String>) -> Work {
         Work {
             id: id,
             work_type: work_type,
@@ -53,14 +53,14 @@ impl Work {
     pub fn empty() -> Work {
         Work::new(
             Uuid::nil(),
-            String::new(),
-            String::new(),
+            None,
+            None,
             ArtistCredit::empty(),
-            String::new(),
+            None,
             Vec::new(),
             Vec::new(),
             Vec::new(),
-            String::new()
+            None
         )
     }
 }

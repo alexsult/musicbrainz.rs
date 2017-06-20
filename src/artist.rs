@@ -17,15 +17,14 @@ use alias::Alias;
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
+#[serde(skip_serializing_if = "")]
 pub struct Artist {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub name: String,
-    pub gender: String,
-    #[serde(deserialize_with="utils::uuid_from_string")]
-    #[serde(serialize_with="utils::string_from_uuid")]
-    pub gender_id: Uuid,
+    pub name: Option<String>,
+    pub gender: Option<String>,
+    pub gender_id: Option<Uuid>,
 	#[serde(rename = "type")]
     pub artist_type: PersonType,
 	#[serde(rename = "type-id")]
@@ -34,10 +33,10 @@ pub struct Artist {
     pub artist_type_id: Uuid,
     pub tags: Vec<Tag>,
     pub release_groups: Vec<ReleaseGroup>,
-    pub disambiguation: String,
-    pub sort_name: String,
+    pub disambiguation: Option<String>,
+    pub sort_name: Option<String>,
     pub life_span: LifeSpan,
-    pub country: String,
+    pub country: Option<String>,
     pub area: Area,
     pub begin_area: Area,
     pub end_area: Area,
@@ -49,17 +48,17 @@ pub struct Artist {
 
 impl Artist {
     pub fn new(id: Uuid, 
-               name: String, 
-               gender: String, 
-               gender_id: Uuid,
+               name: Option<String>, 
+               gender: Option<String>, 
+               gender_id: Option<Uuid>,
                artist_type: PersonType,
                artist_type_id: Uuid,
                tags: Vec<Tag>, 
                release_groups: Vec<ReleaseGroup>,
-               disambiguation: String,
-               sort_name: String,
+               disambiguation: Option<String>,
+               sort_name: Option<String>,
                life_span: LifeSpan,
-               country: String,
+               country: Option<String>,
                area: Area,
                begin_area: Area,
                end_area: Area,
@@ -93,17 +92,17 @@ impl Artist {
     pub fn empty() -> Artist {
         Artist::new(
             Uuid::nil(),
-            String::new(),
-            String::new(),
-            Uuid::nil(),
+            None,
+            None,
+            None,
             PersonType::Other,
             Uuid::nil(),
             Vec::new(),
             Vec::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
             LifeSpan::empty(),
-            String::new(),
+            None,
             Area::empty(),
             Area::empty(),
             Area::empty(),
@@ -132,7 +131,7 @@ impl PartialEq for Artist {
 
 impl fmt::Display for Artist {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{name} ({type})", name=self.name, type=self.artist_type)
+        writeln!(f, "{name} ({type})", name=self.name.as_ref().unwrap(), type=self.artist_type)
     }
 }
 

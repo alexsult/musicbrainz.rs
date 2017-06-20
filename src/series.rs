@@ -14,10 +14,10 @@ pub struct Series {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
-    pub name: String,
-    pub disambiguation: String,
+    pub name: Option<String>,
+    pub disambiguation: Option<String>,
     #[serde(rename="type")]
-    pub series_type: String,
+    pub series_type: Option<String>,
     #[serde(rename="type-id")]
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
@@ -27,9 +27,9 @@ pub struct Series {
 
 impl Series {
     pub fn new(id: Uuid,
-               name: String,
-               disambiguation: String,
-               series_type: String,
+               name: Option<String>,
+               disambiguation: Option<String>,
+               series_type: Option<String>,
                series_type_id: Uuid, 
                relations: Vec<Relation>) -> Series {
         Series {
@@ -45,9 +45,9 @@ impl Series {
     pub fn empty() -> Series {
         Series::new(
             Uuid::nil(),
-            String::new(),
-            String::new(),
-            String::new(),
+            None,
+            None,
+            None,
             Uuid::nil(),
             Vec::new()
         )
