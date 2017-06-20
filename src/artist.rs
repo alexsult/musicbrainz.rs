@@ -17,7 +17,6 @@ use alias::Alias;
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
-#[serde(skip_serializing_if = "")]
 pub struct Artist {
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
