@@ -1,7 +1,6 @@
 extern crate hyper;
 extern crate uuid;
 extern crate url;
-#[macro_use]
 extern crate serde_json;
 extern crate serde;
 #[macro_use]
@@ -53,7 +52,7 @@ impl MusicBrainz {
     }
 
     //fn get(&self, url: &str, params: &HashMap<&str, &str>) -> json::Result<json::JsonValue> {
-    fn get(&self, url: &str, params: &HashMap<&str, &str>) -> Result<String, Error> {
+    fn get(&self, url: &str, params: &HashMap<&str, &str>) -> Result<String, hyper::Error> {
         let base_uri = "https://musicbrainz.org/ws/2";
         
         let mut endpoint = Url::parse(&format!("{}/{}", base_uri, url))

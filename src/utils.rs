@@ -22,7 +22,7 @@ pub fn deserialize_bool<'de, D>(deserializer: D) -> Result<bool, D::Error>
     where D: Deserializer<'de> {
     let bool_return: bool = match Deserialize::deserialize(deserializer) {
         Ok(x) => x,
-        Err(e) => false
+        _ => false
     };
 
     Ok(bool_return)
@@ -33,7 +33,7 @@ pub fn deserialize_packaging<'de, D>(deserializer: D) -> Result<Packaging, D::Er
 
     let packaging_return: Packaging = match Deserialize::deserialize(deserializer) {
         Ok(x) => x,
-        Err(e) => Packaging::Digipak
+        _ => Packaging::Digipak
     };
 
     //let packaging_return = Packaging::NoPack;

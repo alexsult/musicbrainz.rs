@@ -3,10 +3,10 @@ use utils;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct LifeSpan {
-    begin: Option<String>,
-    end: Option<String>,
+    pub begin: Option<String>,
+    pub end: Option<String>,
     #[serde(deserialize_with="utils::deserialize_bool")]
-    ended: bool
+    pub ended: bool
 }
 
 impl LifeSpan {

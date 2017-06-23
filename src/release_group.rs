@@ -4,10 +4,11 @@ use std::collections::HashMap;
 use std::fmt;
 use traits::Entity;
 use error::Error;
-use artist::{Artist,  ArtistCredit};
+use serde_json;
+use artist::ArtistCredit;
 use utils;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct ReleaseGroup {
@@ -20,6 +21,7 @@ pub struct ReleaseGroup {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub artist: Uuid,
     pub artist_credit: Vec<ArtistCredit>,
+    pub disambiguation: Option<String>,
     pub primary_type: AlbumType,
     pub secondary_types: Vec<AlbumType>
 }
@@ -30,6 +32,7 @@ impl ReleaseGroup {
                id: Uuid, 
                artist: Uuid, 
                artist_credit: Vec<ArtistCredit>,
+               disambiguation: Option<String>,
                primary_type: AlbumType, 
                secondary_types: Vec<AlbumType>) -> ReleaseGroup {
 
@@ -39,6 +42,7 @@ impl ReleaseGroup {
             id: id,
             artist: artist,
             artist_credit: artist_credit,
+            disambiguation: disambiguation,
             primary_type: primary_type,
             secondary_types: secondary_types
         }
@@ -51,6 +55,7 @@ impl ReleaseGroup {
             Uuid::nil(),
             Uuid::nil(),
             Vec::new(),
+            None,
             AlbumType::Other,
             Vec::new()
         )
@@ -69,8 +74,9 @@ impl PartialEq for ReleaseGroup {
 
 impl fmt::Display for ReleaseGroup {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(f, "{primary} {name}", primary=self.primary_type, name=self.title.as_ref().unwrap());
-        writeln!(f, "Id: {id}", id=self.id)
+        writeln!(f, "{id} {primary} {name}", id=self.id,
+                                             primary=self.primary_type, 
+                                             name=self.title.as_ref().unwrap())
     }
 }
 

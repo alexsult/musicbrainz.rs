@@ -1,7 +1,15 @@
 use artist::Artist;
 use place::Place;
-use uuid::Uuid;
 use event::Event;
+use area::Area;
+use instrument::Instrument;
+use label::Label;
+use recording::Recording;
+use release::Release;
+use release_group::ReleaseGroup;
+use series::Series;
+use work::Work;
+use uuid::Uuid;
 use utils;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -15,15 +23,23 @@ pub struct Relation {
     #[serde(serialize_with="utils::string_from_uuid")]
     pub relation_type_id: Uuid,
     pub direction: Option<String>,
+    pub area: Area,
     pub artist: Artist,
+    pub event: Event,           
+    pub instrument: Instrument,
+    pub label: Label,
     pub place: Place,
+    pub recording: Recording,
+    pub release: Release,
+    pub release_group: ReleaseGroup,
+    pub series: Series,
+    pub work: Work,
     pub attributes: Vec<String>,
     pub begin: Option<String>,
     pub end: Option<String>,
     #[serde(deserialize_with="utils::deserialize_bool")]
     pub ended: bool,
     pub target_credit: Option<String>,
-    pub event: Event,
     pub ordering_key: i32
 }
 
@@ -31,28 +47,44 @@ impl Relation {
     pub fn new(relation_type: Option<String>,
                relation_type_id: Uuid,
                direction: Option<String>,
+               area: Area,
                artist: Artist,
+               event: Event,
+               instrument: Instrument,
+               label: Label,
                place: Place,
+               recording: Recording,
+               release: Release,
+               release_group: ReleaseGroup,
+               series: Series,
+               work: Work,
                attributes: Vec<String>,
                begin: Option<String>,
                end: Option<String>,
                ended: bool,
                target_credit: Option<String>,
-               event: Event,
                ordering_key: i32) -> Relation {
 
         Relation {
             relation_type: relation_type,
             relation_type_id: relation_type_id,
             direction: direction,
+            area: area,
             artist: artist,
+            event: event,
+            instrument: instrument,
+            label: label,
             place: place,
+            recording: recording,
+            release: release,
+            release_group: release_group,
+            series: series,
+            work: work,
             attributes: attributes,
             begin: begin,
             end: end,
             ended: ended,
             target_credit: target_credit,
-            event: event,
             ordering_key: ordering_key
         }
     }
@@ -62,14 +94,22 @@ impl Relation {
             None,
             Uuid::nil(),
             None,
+            Area::empty(),
             Artist::empty(),
+            Event::empty(),
+            Instrument::empty(),
+            Label::empty(),
             Place::empty(),
+            Recording::empty(),
+            Release::empty(),
+            ReleaseGroup::empty(),
+            Series::empty(),
+            Work::empty(),
             Vec::new(),
             None,
             None,
             false,
             None,
-            Event::empty(),
             0
         )
     }

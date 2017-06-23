@@ -1,12 +1,13 @@
 extern crate musicbrainz;
 extern crate serde_json;
 use musicbrainz::*;
+use enums::*;
 
 #[test]
 fn area_parsing(){
     let json_data = r#"{
         "id": "71bbafaa-e825-3e15-8ca9-017dcad1748b",
-        "disambiguation": "",
+        "disambiguation": null,
         "iso-3166-1-codes": [
             "CA"
         ],
@@ -15,6 +16,9 @@ fn area_parsing(){
     }"#;
     
     let res: area::Area = serde_json::from_str(json_data).unwrap();
+    assert!(res.name.as_ref().unwrap() == "Canada");
+    assert!(res.sort_name.as_ref().unwrap() == "Canada");
+    assert!(res.iso_3166_1_codes[0] == "CA");
 }
 
 #[test]
@@ -30,7 +34,7 @@ fn release_browse_parsing(){
     }"#;
     
     let res: release::ReleaseBrowseResult = serde_json::from_str(json_data).unwrap();
-    println!("res {:?}", res);
+    assert!(res.release_offset == 0);
 }
 
 #[test]
@@ -72,6 +76,8 @@ fn artist_parsing(){
         }}"#;
     
     let res: artist::Artist = serde_json::from_str(json_data).unwrap();
+    assert!(res.name.as_ref().unwrap() == "Radiohead");
+    assert!(res.area.name.as_ref().unwrap() == "United Kingdom");
 }
 
 #[test]
@@ -81,13 +87,8 @@ fn life_span_parsing() {
         "end": null
         }"#;
     
-    let res: life_span::LifeSpan = match serde_json::from_str(json_data) {
-        Ok(val) => val,
-        Err(err) => 
-            panic!("called `Result::unwrap()` on an `Err` value: {:?}", err),
-    };
-
-    println!("{:?}",res);
+    let res: life_span::LifeSpan = serde_json::from_str(json_data).unwrap();
+    assert!(res.begin.as_ref().unwrap() == "1981-01-05");
 }
 
 #[test]
@@ -108,6 +109,8 @@ fn release_group_parsing(){
     }"#;
 
     let res: release_group::ReleaseGroup = serde_json::from_str(json_data).unwrap();
+    assert!(res.disambiguation.as_ref().unwrap() == "");
+    assert!(res.primary_type == AlbumType::Album);
 }
 
 #[test]
@@ -129,6 +132,9 @@ fn relation_parsing(){
                         }"#;
 
     let res: relation::Relation = serde_json::from_str(json_data).unwrap();
+    assert!(res.relation_type.as_ref().unwrap() == "part of");
+    assert!(res.direction.as_ref().unwrap() == "backward");
+    assert!(res.area.area_type.as_ref().unwrap() == "Subdivision");
 }
 
 
@@ -182,6 +188,8 @@ fn tag_parsing(){
     }"#;
     
     let res: tag::Tag = serde_json::from_str(json_data).unwrap();
+    assert!(res.count == 1);
+    assert!(res.name.as_ref().unwrap() == "dance and electronica");
 }
 
 #[test]
@@ -229,5 +237,7 @@ fn instrument_parsing(){
         }"#;
     
     let res: instrument::Instrument = serde_json::from_str(json_data).unwrap();
+    assert!(res.instrument_type.as_ref().unwrap() == "String instrument");
+    assert!(res.aliases[0].locale.as_ref().unwrap() == "ja");
 }
 

@@ -5,8 +5,6 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
-use std::error::Error;
-
 use proc_macro::TokenStream;
 
 // copy paste from:
@@ -74,7 +72,7 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                                                             id=entity_id), 
                                                    params) {
                     Ok(x) => x,
-                    Err(e) => return Err(Error::AsSlice) 
+                    Err(e) => return Err(Error::Get(e)) 
                 };
 
                 let data_struct: #struct_name =
@@ -95,10 +93,10 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                                                      endpoint=#endpoint),
                                             params) {
                     Ok(x) => x,
-                    Err(e) => return Err(Error::AsSlice) 
+                    Err(e) => return Err(Error::Get(e)) 
                 };
 
-                let mut results: Vec<#struct_name> = Vec::new();
+                //let mut results: Vec<#struct_name> = Vec::new();
 
                 let search_results: #struct_result_name = match serde_json::from_str(&data) {
                     Ok(x) => x,
@@ -116,10 +114,10 @@ fn impl_entity(ast: &syn::MacroInput) -> quote::Tokens {
                                                      endpoint=#endpoint),
                                             params) {
                     Ok(x) => x,
-                    Err(e) => return Err(Error::AsSlice) 
+                    Err(e) => return Err(Error::Get(e)) 
                 };
 
-                let mut results: Vec<#struct_name> = Vec::new();
+                //let mut results: Vec<#struct_name> = Vec::new();
 
                 let search_results: #struct_browse_name = match serde_json::from_str(&data) {
                     Ok(x) => x,

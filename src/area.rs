@@ -12,6 +12,8 @@ use relation::Relations;
 #[serde(rename_all = "kebab-case")]
 #[serde(default)]
 pub struct Area {
+    #[serde(rename="type")]
+    pub area_type: Option<String>,
     #[serde(deserialize_with="utils::uuid_from_string")]
     #[serde(serialize_with="utils::string_from_uuid")]
     pub id: Uuid,
@@ -27,7 +29,8 @@ pub struct Area {
 }
 
 impl Area {
-    pub fn new(id: Uuid, 
+    pub fn new(area_type: Option<String>,
+               id: Uuid, 
                sort_name: Option<String>, 
                name: Option<String>, 
                disambiguation: Option<String>,
@@ -39,6 +42,7 @@ impl Area {
                relation_list: Vec<Relations>) -> Area { 
 
         Area {
+            area_type: area_type,
             id: id,
             sort_name: sort_name,
             name: name, 
@@ -54,6 +58,7 @@ impl Area {
 
     pub fn empty() -> Area {
         Area::new(
+            None,
             Uuid::nil(),
             None,
             None,

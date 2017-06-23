@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::fmt;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 /// The PersonType enum is used to state whether an artist is a person, a group, or something else.
 pub enum PersonType {
     /// Indicates an individual person.
@@ -51,7 +51,7 @@ impl fmt::Display for PersonType {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum AlbumType {
     Album,
     Single,
@@ -120,7 +120,7 @@ impl fmt::Display for AlbumType {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ReleaseStatus {
     Official,
     Promotion,
@@ -157,7 +157,7 @@ impl fmt::Display for ReleaseStatus {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum Packaging {
     #[serde(rename="Jewel Case")]
     JewelCase,

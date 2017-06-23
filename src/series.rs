@@ -1,6 +1,5 @@
 use serde_json;
 use utils;
-use brainz_macros;
 use relation::Relation;
 use uuid::Uuid;
 use traits::Entity;

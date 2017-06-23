@@ -5,7 +5,6 @@ use label::{LabelInfo, Label};
 use media::Media;
 use release_group::ReleaseGroup;
 use text_representation::TextRepresentation;
-use std::fmt;
 use std::collections::HashMap;
 use traits::Entity;
 use error::Error;
@@ -13,7 +12,6 @@ use uuid::Uuid;
 use enums::*;
 use utils;
 use serde_json;
-use brainz_macros;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]

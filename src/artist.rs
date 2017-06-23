@@ -1,6 +1,6 @@
 use release_group::ReleaseGroup;
 use uuid::Uuid;
-use enums::{PersonType, AlbumType};
+use enums::PersonType;
 use std::fmt;
 use std::collections::HashMap;
 use traits::Entity;
@@ -10,9 +10,8 @@ use area::Area;
 use tag::Tag;
 use serde_json;
 use utils;
-use brainz_macros;
+//use brainz_macros;
 use alias::Alias;
-//use super::get_endpoint;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Entity)]
 #[serde(rename_all = "kebab-case")]

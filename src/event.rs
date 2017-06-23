@@ -4,8 +4,6 @@ use error::Error;
 use std::collections::HashMap;
 use serde_json;
 use traits::Entity;
-use tag::Tag;
-use alias::Alias;
 use life_span::LifeSpan;
 use relation::Relation;
 

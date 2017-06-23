@@ -1,9 +1,7 @@
 use alias::Alias;
 use uuid::Uuid;
 use tag::Tag;
-use serde_json;
 use utils;
-use brainz_macros;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
